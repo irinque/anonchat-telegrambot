@@ -39,11 +39,20 @@ class Database(object):
         else:
             self._close()
             return False
-    
+        
+    def user_check_ban(self, user_id):
+        self._connect()
+        self.__cursor.execute(f"SELECT user_ban FROM users WHERE user_id = {user_id}")
+        self._commit()
+        if bool(self.__cursor.fetchone()[0]):
+            return True
+        else:
+            return False
+        self._close()
     def insert_user(self, user_name, user_id):
         self._connect()
         self.__cursor.execute(f"INSERT INTO users (user_name, user_id) VALUES ('{user_name}', '{user_id}')")
         self._commit()
         self._close()
 
-database = Database()
+db = Database()
