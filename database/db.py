@@ -1,4 +1,5 @@
 import psycopg2
+from datetime import date
 from config import HOST, USER, PASSWORD, DATABASE
 
 class Database(object):
@@ -53,7 +54,8 @@ class Database(object):
         
     def insert_user(self, user_name, user_id):
         self._connect()
-        self.__cursor.execute(f"INSERT INTO users (user_name, user_id) VALUES ('{user_name}', '{user_id}');")
+        current_date = date.today().strftime("%d-%m-%Y")
+        self.__cursor.execute(f"INSERT INTO users (user_name, user_id, user_regdate) VALUES ('{user_name}', '{user_id}', '{current_date}');")
         self._commit()
         self._close()
 
@@ -136,7 +138,7 @@ class Database(object):
         self._connect()
         self.__cursor.execute(f"SELECT user_chats FROM users WHERE user_id = {user_id}")
         self._commit()
-        count = self.__cursor.fetchone()
+        count = self.__cursor.fetchone()[0]
         self._close()
         return count
     
@@ -145,5 +147,13 @@ class Database(object):
         self.__cursor.execute(f"UPDATE users SET user_chats += 1 WHERE user_id = {user_id}")
         self._commit()
         self._close()
+
+    def get_user_regdate(self, user_id):
+        self._connect()
+        self.__cursor.execute(f"SELECT user_regdate FROM users WHERE user_id = {user_id}")
+        self._commit()
+        regdate = self.__cursor.fetchone()[0]
+        self._close()
+        return regdate
 
 db = Database()
