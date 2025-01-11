@@ -10,6 +10,7 @@ from settings.markups import *
 from settings.messages import *
 from commands.start import command_start
 from commands.menu import command_menu
+from handlers.message_handler.search import handler_search
 from handlers.callback_handler.rules_accept import callback_rules_accept
 from config import TOKEN
 
@@ -24,6 +25,11 @@ async def start(message: Message, state: FSMContext):
 @dp.message_handler(commands=['menu'])
 async def menu(message: Message, state: FSMContext):
     await command_menu(message=message, bot=bot)
+
+@dp.message_handler(content_types=['text'])
+async def message_handler(message: Message):
+    if message.text == "🔎 Поиск":
+        await handler_search(message=message, bot=bot)
 
 @dp.callback_query_handler()
 async def query_handler(call: CallbackQuery, state: FSMContext):

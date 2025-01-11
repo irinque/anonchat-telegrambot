@@ -33,26 +33,77 @@ class Database(object):
         self._connect()
         self.__cursor.execute(f"SELECT * FROM users WHERE user_id = {user_id};")
         self._commit()
-        if self.__cursor.fetchone() != None:
-            self._close()
+        user = self.__cursor.fetchone()
+        self._close()
+        if user != None:
             return True
         else:
-            self._close()
             return False
         
     def user_check_ban(self, user_id):
         self._connect()
-        self.__cursor.execute(f"SELECT user_ban FROM users WHERE user_id = {user_id}")
+        self.__cursor.execute(f"SELECT user_ban FROM users WHERE user_id = {user_id};")
         self._commit()
-        if bool(self.__cursor.fetchone()[0]):
+        status = self.__cursor.fetchone()[0]
+        self._close()
+        if bool(status):
             return True
         else:
             return False
-        self._close()
+        
     def insert_user(self, user_name, user_id):
         self._connect()
-        self.__cursor.execute(f"INSERT INTO users (user_name, user_id) VALUES ('{user_name}', '{user_id}')")
+        self.__cursor.execute(f"INSERT INTO users (user_name, user_id) VALUES ('{user_name}', '{user_id}');")
         self._commit()
         self._close()
+
+    def check_queue(self):
+        self._connect()
+        self.__cursor.execute(f"SELECT * FROM queue;")
+        self._commit()
+        queue = self.__cursor.fetchall()
+        self._close()
+        if len(queue) > 0:
+            return True
+        else:
+            return False
+        
+    def add_queue(self, user_id):
+        self._connect()
+        self.__cursor.execute(f"INSERT INTO queue (user_id) VALUES ('{user_id}');")
+        self._commit()
+        self._close()
+
+    def remove_queue(self, user_id):
+        self._connect()
+        self.__cursor.execute(f"DELETE FROM queue WHERE user_id = {user_id};")
+        self._commit()
+        self._close()
+
+    def add_session(self, user_id1, user_id2):
+        self._connect()
+        self.__cursor.execute(f"INSERT INTO sessions (session_user_id_1, session_user_id_2) VALUES ('{user_id1}', '{user_id2}');")
+        self._commit()
+        self._close()
+
+    def random_user_from_queue(self):
+        self._connect()
+        self.__cursor.execute(f"SELECT user_id FROM queue LIMIT 1;")
+        user_id = self.__cursor.fetchone()[0]
+        self._commit()
+        self._close()
+        return user_id
+    
+    def check_queue_duplicated(self, user_id):
+        self._connect()
+        self.__cursor.execute(f"SELECT * FROM queue WHERE user_id = {user_id};")
+        self._commit()
+        queue_duplicated = self.__cursor.fetchall()
+        self._close()
+        if queue_duplicated:
+            return True
+        else:
+            return False
+    
 
 db = Database()
