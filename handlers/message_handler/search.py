@@ -15,6 +15,8 @@ async def handler_search(message: Message, bot: Bot):
                     random_user = db.random_user_from_queue()
                     db.remove_queue(random_user)
                     db.add_session(message.from_user.id, random_user)
+                    db.update_user_chats(message.from_user.id)
+                    db.update_user_chats(random_user)
                     await bot.send_message(message.from_user.id, message_search_session_started, parse_mode="Markdown")
                     await bot.send_message(random_user, message_search_session_started, parse_mode="Markdown")
                 else:

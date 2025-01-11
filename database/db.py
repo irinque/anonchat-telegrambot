@@ -132,5 +132,18 @@ class Database(object):
         interlocutor = users[0]
         return interlocutor
     
+    def get_users_chats(self, user_id):
+        self._connect()
+        self.__cursor.execute(f"SELECT user_chats FROM users WHERE user_id = {user_id}")
+        self._commit()
+        count = self.__cursor.fetchone()
+        self._close()
+        return count
+    
+    def update_user_chats(self, user_id):
+        self._connect()
+        self.__cursor.execute(f"UPDATE users SET user_chats += 1 WHERE user_id = {user_id}")
+        self._commit()
+        self._close()
 
 db = Database()
