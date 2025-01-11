@@ -126,7 +126,7 @@ class Database(object):
     
     def get_user_from_session(self, user_id):
         self._connect()
-        self.__cursor.execute((f"SELECT (session_user_id_1, session_user_id_2) FROM sessions WHERE session_user_id_1 = {user_id};"))
+        self.__cursor.execute((f"SELECT (session_user_id_1, session_user_id_2) FROM sessions WHERE session_user_id_1 = {user_id} OR session_user_id_2 = {user_id};"))
         self._commit()
         users = list(eval(self.__cursor.fetchall()[0][0]))
         self._close()
@@ -144,7 +144,7 @@ class Database(object):
     
     def update_user_chats(self, user_id):
         self._connect()
-        self.__cursor.execute(f"UPDATE users SET user_chats += 1 WHERE user_id = {user_id}")
+        self.__cursor.execute(f"UPDATE users SET user_chats = user_chats + 1 WHERE user_id = {user_id}")
         self._commit()
         self._close()
 
