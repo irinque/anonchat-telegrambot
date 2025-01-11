@@ -20,7 +20,5 @@ async def handler_search(message: Message, bot: Bot):
                 else:
                     db.add_queue(message.from_user.id)
                     await bot.send_message(message.from_user.id, message_search_queue, parse_mode="Markdown")
-
-
     else:
         await bot.send_message(message.from_user.id, message_registration, parse_mode="Markdown")

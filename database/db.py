@@ -86,6 +86,12 @@ class Database(object):
         self._commit()
         self._close()
 
+    def remove_session(self, user_id):
+        self._connect()
+        self.__cursor.execute(f"DELETE FROM sessions WHERE session_user_id_1 = {user_id} OR session_user_id_2 = {user_id};")
+        self._commit()
+        self._close()
+
     def random_user_from_queue(self):
         self._connect()
         self.__cursor.execute(f"SELECT user_id FROM queue LIMIT 1;")
@@ -104,6 +110,27 @@ class Database(object):
             return True
         else:
             return False
+        
+    def check_session(self, user_id):
+        self._connect()
+        self.__cursor.execute((f"SELECT * FROM sessions WHERE session_user_id_1 = {user_id} OR session_user_id_2 = {user_id};"))
+        self._commit()
+        session = self.__cursor.fetchall()
+        self._close()
+        if session:
+            return True
+        else:
+            return False
+    
+    def get_user_from_session(self, user_id):
+        self._connect()
+        self.__cursor.execute((f"SELECT (session_user_id_1, session_user_id_2) FROM sessions WHERE session_user_id_1 = {user_id};"))
+        self._commit()
+        users = list(eval(self.__cursor.fetchall()[0][0]))
+        self._close()
+        users.remove(user_id)
+        interlocutor = users[0]
+        return interlocutor
     
 
 db = Database()

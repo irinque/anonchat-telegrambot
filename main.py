@@ -11,6 +11,7 @@ from settings.messages import *
 from commands.start import command_start
 from commands.menu import command_menu
 from handlers.message_handler.search import handler_search
+from handlers.message_handler.stop import handler_stop
 from handlers.callback_handler.rules_accept import callback_rules_accept
 from config import TOKEN
 
@@ -30,6 +31,8 @@ async def menu(message: Message, state: FSMContext):
 async def message_handler(message: Message):
     if message.text == "🔎 Поиск":
         await handler_search(message=message, bot=bot)
+    if message.text == "⛔ Стоп":
+        await handler_stop(message=message, bot=bot)
 
 @dp.callback_query_handler()
 async def query_handler(call: CallbackQuery, state: FSMContext):
