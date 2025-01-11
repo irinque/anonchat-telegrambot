@@ -9,6 +9,7 @@ from database.db import db
 from settings.markups import *
 from settings.messages import *
 from commands.start import command_start
+from commands.menu import command_menu
 from handlers.callback_handler.rules_accept import callback_rules_accept
 from config import TOKEN
 
@@ -19,6 +20,10 @@ dp = Dispatcher(bot, storage=storage)
 @dp.message_handler(commands=['start'])
 async def start(message: Message, state: FSMContext):
     await command_start(message=message, bot=bot)
+
+@dp.message_handler(commands=['menu'])
+async def menu(message: Message, state: FSMContext):
+    await command_menu(message=message, bot=bot)
 
 @dp.callback_query_handler()
 async def query_handler(call: CallbackQuery, state: FSMContext):
