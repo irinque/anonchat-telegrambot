@@ -155,5 +155,11 @@ class Database(object):
         regdate = self.__cursor.fetchone()[0]
         self._close()
         return regdate
+    
+    def add_complaint(self, sender_id, target_id, reason):
+        self._connect()
+        self.__cursor.execute(f"INSERT INTO сomplaints (сomplaint_sender, сomplaint_target, complaint_reason) VALUES ('{sender_id}', '{target_id}', '{reason}')")
+        self._commit()
+        self._close()
 
 db = Database()

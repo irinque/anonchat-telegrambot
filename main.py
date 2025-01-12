@@ -15,6 +15,7 @@ from handlers.message_handler.stop import handler_stop
 from handlers.message_handler.profile import handler_profile
 from handlers.message_handler.private_chat import handler_private_chat
 from handlers.callback_handler.rules_accept import callback_rules_accept
+from handlers.callback_handler.complaint_send import callback_complaint_send
 from config import TOKEN
 
 bot = Bot(token=TOKEN)
@@ -44,6 +45,8 @@ async def message_handler(message: Message):
 async def query_handler(call: CallbackQuery, state: FSMContext):
     if call.data == "markup_rules_accept":
         await callback_rules_accept(call=call, bot=bot)
+    if call.data == "markup_сomplaint_send":
+        await callback_complaint_send(call=call, bot=bot)
 
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
