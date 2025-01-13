@@ -16,6 +16,8 @@ from handlers.message_handler.profile import handler_profile
 from handlers.message_handler.private_chat import handler_private_chat
 from handlers.callback_handler.rules_accept import callback_rules_accept
 from handlers.callback_handler.complaint_send import callback_complaint_send
+from handlers.callback_handler.ban_user import ban_user
+from handlers.callback_handler.justify_user import justify_user
 from config import TOKEN
 
 bot = Bot(token=TOKEN)
@@ -47,6 +49,10 @@ async def query_handler(call: CallbackQuery, state: FSMContext):
         await callback_rules_accept(call=call, bot=bot)
     if call.data == "markup_сomplaint_send":
         await callback_complaint_send(call=call, bot=bot)
+    if call.data == "markup_admin_ban":
+        await ban_user(call=call, bot=bot)
+    if call.data == "markup_admin_justify":
+        await justify_user(call=call, bot=bot)
 
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
