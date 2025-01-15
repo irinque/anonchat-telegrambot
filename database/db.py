@@ -117,7 +117,7 @@ class Database(object):
         
     def check_session(self, user_id):
         self._connect()
-        self.__cursor.execute((f"SELECT * FROM sessions WHERE session_user_id_1 = {user_id} OR session_user_id_2 = {user_id};"))
+        self.__cursor.execute(f"SELECT * FROM sessions WHERE session_user_id_1 = {user_id} OR session_user_id_2 = {user_id};")
         self._commit()
         session = self.__cursor.fetchall()
         self._close()
@@ -136,9 +136,9 @@ class Database(object):
         interlocutor = users[0]
         return interlocutor
     
-    def get_users_chats(self, user_id):
+    def get_user_chats(self, user_id):
         self._connect()
-        self.__cursor.execute(f"SELECT user_chats FROM users WHERE user_id = {user_id}")
+        self.__cursor.execute(f"SELECT user_chats FROM users WHERE user_id = {user_id};")
         self._commit()
         count = self.__cursor.fetchone()[0]
         self._close()
@@ -146,13 +146,13 @@ class Database(object):
     
     def update_user_chats(self, user_id):
         self._connect()
-        self.__cursor.execute(f"UPDATE users SET user_chats = user_chats + 1 WHERE user_id = {user_id}")
+        self.__cursor.execute(f"UPDATE users SET user_chats = user_chats + 1 WHERE user_id = {user_id};")
         self._commit()
         self._close()
 
     def get_user_regdate(self, user_id):
         self._connect()
-        self.__cursor.execute(f"SELECT user_regdate FROM users WHERE user_id = {user_id}")
+        self.__cursor.execute(f"SELECT user_regdate FROM users WHERE user_id = {user_id};")
         self._commit()
         regdate = self.__cursor.fetchone()[0]
         self._close()
@@ -160,57 +160,48 @@ class Database(object):
     
     def add_complaint(self, sender_id, target_id, reason):
         self._connect()
-        self.__cursor.execute(f"INSERT INTO сomplaints (сomplaint_sender, сomplaint_target, complaint_reason) VALUES ('{sender_id}', '{target_id}', '{reason}')")
+        self.__cursor.execute(f"INSERT INTO сomplaints (сomplaint_sender, сomplaint_target, complaint_reason) VALUES ('{sender_id}', '{target_id}', '{reason}');")
         self._commit()
         self._close()
-        
-    def get_role_from_session(self, user_id):
-        self._connect()
-        self.__cursor.execute(f"SELECT * FROM sessions WHERE session_user_id_1 = {user_id};")
-        self._commit()
-        session_id = self.__cursor.fetchall()
-        self._commit()
-        self._close()
-        if session_id:
-            return True
-        else:
-            return False
     
-    def add_message_user_1(self, user_id, message):
-        messages = list(self.get_messages_user_1(user_id))
+    def get_target_messages(self, target_id):
+        self._connect()
+        self.__cursor.execute(f"SELECT session_user_messages_1 FROM sessions WHERE session_user_id_1 = {target_id};")
+        messages_1 = self.__cursor.fetchone()
+        self._commit()
+        self.__cursor.execute(f"SELECT session_user_messages_2 FROM sessions WHERE session_user_id_2 = {target_id};")
+        messages_2 = self.__cursor.fetchone()
+        self._commit()
+        self._close()
+        if messages_1 != None:
+            return messages_1[0]
+        else:
+            return messages_2[0]
+        
+    def add_user_message(self, user_id, message):
+        messages = list(self.get_user_messages(user_id))
         self._connect()
         messages.append(f'"{message}"')
         messages = ",".join(messages)
         self.__cursor.execute(f"UPDATE sessions SET session_user_messages_1 = '%s' WHERE session_user_id_1 = {user_id};" % ("{" + messages + "}"))
         self._commit()
-        self._close()
-
-    def add_message_user_2(self, user_id, message):
-        messages = list(self.get_messages_user_2(user_id))
-        self._connect()
-        messages.append(f'"{message}"')
-        messages = ",".join(messages)
         self.__cursor.execute(f"UPDATE sessions SET session_user_messages_2 = '%s' WHERE session_user_id_2 = {user_id};" % ("{" + messages + "}"))
         self._commit()
         self._close()
 
-    def get_messages_user_1(self, user_id):
+    def get_user_messages(self, user_id):
         self._connect()
         self.__cursor.execute(f"SELECT session_user_messages_1 FROM sessions WHERE session_user_id_1 = {user_id};")
+        messages_1 = self.__cursor.fetchone()
         self._commit()
-        messages = self.__cursor.fetchone()[0]
-        self._commit()
-        self._close()
-        return messages
-
-    def get_messages_user_2(self, user_id):
-        self._connect()
         self.__cursor.execute(f"SELECT session_user_messages_2 FROM sessions WHERE session_user_id_2 = {user_id};")
-        self._commit()
-        messages = self.__cursor.fetchone()[0]
+        messages_2 = self.__cursor.fetchone()
         self._commit()
         self._close()
-        return messages
+        if messages_1 != None:
+            return messages_1[0]
+        else:
+            return messages_2[0]
     
     def check_admin_status(self, user_id):
         self._connect()

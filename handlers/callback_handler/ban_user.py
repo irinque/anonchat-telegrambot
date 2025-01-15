@@ -9,5 +9,5 @@ async def ban_user(call: CallbackQuery, bot: Bot):
         db.update_complaint(target_id, "banned")
         db.ban_user(target_id, call.from_user.id)
         messages = call.message.text.split("\n")[5:]
-        messages = "\n- ".join(messages)
-        await call.message.edit_text(message_ticket % (f'N{target_id}: ❌ БАН', target_id, "Не указана", f"```[CHAT_MESSAGES]:\n- {messages}```"), parse_mode="Markdown")
+        messages = "\n".join(messages)
+        await call.message.edit_text(message_ticket % (f'{target_id}: ❌ БАН', target_id, "Не указана", f"```[CHAT_MESSAGES]:\n- {messages}```"), parse_mode="Markdown")
