@@ -18,7 +18,8 @@ from handlers.callback_handler.rules_accept import callback_rules_accept
 from handlers.callback_handler.complaint_send import callback_complaint_send
 from handlers.callback_handler.ban_user import ban_user
 from handlers.callback_handler.justify_user import justify_user
-from config import TOKEN
+from handlers.other_handler.check_subscription import check_subscription, warning
+from config import TOKEN, CHAT_ID
 
 bot = Bot(token=TOKEN)
 storage = MemoryStorage()
@@ -34,14 +35,17 @@ async def menu(message: Message, state: FSMContext):
 
 @dp.message_handler(content_types=['text'])
 async def message_handler(message: Message):
-    if message.text == "🔎 Поиск":
-        await handler_search(message=message, bot=bot)
-    elif message.text == "⛔ Стоп":
-        await handler_stop(message=message, bot=bot)
-    elif message.text == "👀 Профиль":
-        await handler_profile(message=message, bot=bot)
-    elif message.text != "🔎 Поиск" and message.text != "⛔ Стоп" and message.text != "👀 Профиль":
-        await handler_private_chat(message=message, bot=bot)
+    if check_subscription(await bot.get_chat_member(chat_id=CHAT_ID, user_id=message.from_user.id)):
+        if message.text == "🔎 Поиск":
+            await handler_search(message=message, bot=bot)
+        elif message.text == "⛔ Стоп":
+            await handler_stop(message=message, bot=bot)
+        elif message.text == "👀 Профиль":
+            await handler_profile(message=message, bot=bot)
+        elif message.text != "🔎 Поиск" and message.text != "⛔ Стоп" and message.text != "👀 Профиль":
+            await handler_private_chat(message=message, bot=bot)
+    else:
+        await warning(message=message, bot=bot)
 
 @dp.callback_query_handler()
 async def query_handler(call: CallbackQuery, state: FSMContext):
