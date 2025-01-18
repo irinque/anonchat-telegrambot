@@ -19,6 +19,8 @@ from handlers.callback_handler.complaint_send import callback_complaint_send
 from handlers.callback_handler.ban_user import ban_user
 from handlers.callback_handler.justify_user import justify_user
 from handlers.other_handler.check_subscription import check_subscription, warning
+from handlers.photo_handler.download import download
+from handlers.photo_handler.send_photo import send_photo
 from config import TOKEN, CHAT_ID
 
 bot = Bot(token=TOKEN)
@@ -46,6 +48,11 @@ async def message_handler(message: Message):
             await handler_private_chat(message=message, bot=bot)
     else:
         await warning(message=message, bot=bot)
+
+@dp.message_handler(content_types=['photo'])
+async def menu(message: Message, state: FSMContext):
+    photo_id = await download(message=message)
+    await send_photo(message=message, bot=bot, photo_id=photo_id)
 
 @dp.callback_query_handler()
 async def query_handler(call: CallbackQuery, state: FSMContext):
