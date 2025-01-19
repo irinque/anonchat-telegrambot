@@ -10,6 +10,7 @@ async def send_photo(message: Message, bot: Bot, photo_id):
         else:
             if db.check_session(message.from_user.id):
                 interlocutor = db.get_user_from_session(message.from_user.id)
+                db.add_user_image(message.from_user.id, photo_id=photo_id)
                 await bot.send_photo(interlocutor, InputFile(f"img/users/{photo_id}.jpg"))
     else:
         await bot.send_message(message.from_user.id, message_registration, parse_mode="Markdown")

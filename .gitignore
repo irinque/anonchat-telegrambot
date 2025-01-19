@@ -1,5 +1,4 @@
 config.py
 __pycache__
 env/
-img/users/*
-img/bot/*
+img/

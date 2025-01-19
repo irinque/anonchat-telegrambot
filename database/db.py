@@ -202,7 +202,32 @@ class Database(object):
             return messages_1[0]
         else:
             return messages_2[0]
+        
+    def get_user_images(self, user_id):
+        self._connect()
+        self.__cursor.execute(f"SELECT session_user_images_1 FROM sessions WHERE session_user_id_1 = {user_id};")
+        images_1 = self.__cursor.fetchone()
+        self._commit()
+        self.__cursor.execute(f"SELECT session_user_images_2 FROM sessions WHERE session_user_id_2 = {user_id};")
+        images_2 = self.__cursor.fetchone()
+        self._commit()
+        self._close()
+        if images_1 != None:
+            return images_1[0]
+        else:
+            return images_2[0]
     
+    def add_user_image(self, user_id, photo_id):
+        images = list(self.get_user_images(user_id))
+        self._connect()
+        images.append(f'"{photo_id}"')
+        images = ",".join(images)
+        self.__cursor.execute(f"UPDATE sessions SET session_user_images_1 = '%s' WHERE session_user_id_1 = {user_id};" % ("{" + images + "}"))
+        self._commit()
+        self.__cursor.execute(f"UPDATE sessions SET session_user_images_2 = '%s' WHERE session_user_id_2 = {user_id};" % ("{" + images + "}"))
+        self._commit()
+        self._close()
+
     def check_admin_status(self, user_id):
         self._connect()
         self.__cursor.execute(f"SELECT * FROM admins WHERE admin_id = {user_id};")
