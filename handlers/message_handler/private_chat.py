@@ -11,6 +11,9 @@ async def handler_private_chat(message: Message, bot: Bot):
             if db.check_session(message.from_user.id):
                 interlocutor = db.get_user_from_session(message.from_user.id)
                 db.add_user_message(message.from_user.id, message.text)
-                await bot.send_message(interlocutor, message.text, parse_mode="Markdown")
+                if message.reply_to_message:
+                    await bot.send_message(interlocutor, message.text, parse_mode="Markdown", reply_to_message_id=message.reply_to_message.message_id)
+                else:
+                    await bot.send_message(interlocutor, message.text, parse_mode="Markdown")
     else:
         await bot.send_message(message.from_user.id, message_registration, parse_mode="Markdown")
