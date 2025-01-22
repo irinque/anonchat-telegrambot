@@ -6,10 +6,12 @@ attrs==24.3.0
 Babel==2.9.1
 certifi==2024.12.14
 charset-normalizer==3.4.1
+exif==1.6.1
 frozenlist==1.5.0
 idna==3.10
 magic-filter==1.0.12
 multidict==6.1.0
+plum-py==0.8.7
 propcache==0.2.1
 psycopg2-binary==2.9.10
 pytz==2024.2
